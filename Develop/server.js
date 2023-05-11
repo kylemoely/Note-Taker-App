@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const uuid = require('./helpers/uuid');
+const getNotes = require('./helpers/getNotes');
+
 
 const PORT = 3001;
 
