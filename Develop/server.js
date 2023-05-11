@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 const uuid = require('./helpers/uuid');
-const getNotes = require('./helpers/getNotes');
 const fs = require('fs');
+const { resolveObjectURL } = require('buffer');
 
 const PORT = 3001;
 
@@ -25,9 +25,15 @@ app.post('/api/notes', async (req, res) => {
     const newNote = req.body;
     newNote.id = uuid();
     fs.readFile('./db/db.json', 'utf-8', (err, data) => {
-        if(err){
-            console.error(err);
+        if(!data){
+            res.status(404).json({message:"No notes found"});
+            return;
         }
+        if(err){
+            res.status(500).json(err);
+            return;
+        }
+
         const notes = JSON.parse(data);
         notes.push(newNote);
 
@@ -35,6 +41,7 @@ app.post('/api/notes', async (req, res) => {
 
     })
 });
+
 
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'));
