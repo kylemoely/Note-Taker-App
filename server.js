@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const uuid = require('./helpers/uuid');
+const uuid = require('./Develop/helpers/uuid');
 const fs = require('fs');
 const { resolveObjectURL } = require('buffer');
 
@@ -9,22 +9,22 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 
-app.use(express.static('public'));
+app.use(express.static('Develop/public'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/notes.html'));
+    res.sendFile(path.join(__dirname, '/Develop/public/notes.html'));
 });
 
 app.get('/api/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, '/db/db.json'));
+    res.sendFile(path.join(__dirname, '/Develop/db/db.json'));
 });
 
 app.post('/api/notes', async (req, res) => {
     const newNote = req.body;
     newNote.id = uuid();
-    fs.readFile('./db/db.json', 'utf-8', (err, data) => {
+    fs.readFile('./Develop/db/db.json', 'utf-8', (err, data) => {
         if(!data){
             res.status(404).json({message:"No notes found"});
             return;
@@ -37,14 +37,14 @@ app.post('/api/notes', async (req, res) => {
         const notes = JSON.parse(data);
         notes.push(newNote);
 
-        fs.writeFile('./db/db.json', JSON.stringify(notes), (err) => err ? console.error(err) : console.log("Note saved!"));
+        fs.writeFile('./Develop/db/db.json', JSON.stringify(notes), (err) => err ? console.error(err) : console.log("Note saved!"));
 
     })
 });
 
 
 app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html'));
+    res.sendFile(path.join(__dirname, '/Develop/public/index.html'));
 });
 
 app.listen(PORT, () =>
